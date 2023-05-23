@@ -8,6 +8,7 @@ from ctypes import cast, POINTER
 from comtypes import CLSCTX_ALL
 from pycaw.pycaw import AudioUtilities, IAudioEndpointVolume
 import screen_brightness_control as sbc
+import pyautogui
 
 wCam, hCam = 640, 480
 cap = cv2.VideoCapture(0)
@@ -50,9 +51,10 @@ while True:
     # fingers = detector.fingersUp(lmList)
 
     if handedness == "Left":
-        # print("Right")
+        
         fingers = detector.fingersUp(lmList)
-        if fingers[1] and not fingers[2] and not fingers[3] and not fingers[4] :
+        # Volume
+        if fingers[1] and not fingers[0] and not fingers[2] and not fingers[3] and not fingers[4] :
 
             while True:
                 success , img = cap.read()
@@ -80,7 +82,7 @@ while True:
                 cv2.imshow("Img", img)
                 cv2.waitKey(1)
 
-
+        # Bluetooth
         elif fingers[1] and fingers[2] and not fingers[3] and not fingers[4] :
 
             while True:
@@ -109,12 +111,36 @@ while True:
                 cv2.putText(img, f'FPS: {int(fps)}', (40,50), cv2.FONT_HERSHEY_COMPLEX, 1, (255,0,0, 3))
                 cv2.imshow("Img", img)
                 cv2.waitKey(1)
+        # Zoom Out
+        elif  fingers[1] and  fingers[0] and not fingers[2] and not fingers[3] and not fingers[4] :
+            while True:
+                success , img = cap.read()
+                img = cv2.flip(img, 1)
+                cTime = time.time()
+                fps =  1/(cTime-pTime)
+                pTime = cTime
+                img = detector.findHands(img)
+                lmList, handedness = detector.findPosition(img, draw= False)
+
+                if len(lmList)!=0:
+                    
+                    fingers = detector.fingersUp(lmList)
+                    if not fingers[1] and  fingers[0] and not fingers[2] and not fingers[3] and not fingers[4]:
+                        print("Zoom Out")
+                        pyautogui.keyDown("ctrl")
+                        pyautogui.press("-")
+                        pyautogui.keyUp("ctrl")
+                    break
+                # cv2.putText(img, f'FPS: {int(fps)}', (40,50), cv2.FONT_HERSHEY_COMPLEX, 1, (255,0,0, 3))
+                # cv2.imshow("Img", img)
+                # cv2.waitKey(1)
+
 
        
     elif handedness == "Right":
-        # print("Left")
+        # Brightness
         fingers = detector.fingersUp(lmList)
-        if fingers[1] and not fingers[2] and not fingers[3] and not fingers[4] :
+        if  fingers[1] and  fingers[0] and not fingers[2] and not fingers[3] and not fingers[4] :
 
             while True:
                 success , img = cap.read()
@@ -137,8 +163,8 @@ while True:
                     sbc.set_brightness(int(brightness))
                     
                     break
-
-        elif fingers[1] and fingers[2] and not fingers[3] and not fingers[4] :
+        # WIFI
+        elif fingers[1] and fingers[2] and not fingers[3] and not fingers[4]:
 
             while True:
                 success , img = cap.read()
@@ -166,6 +192,32 @@ while True:
                 cv2.putText(img, f'FPS: {int(fps)}', (40,50), cv2.FONT_HERSHEY_COMPLEX, 1, (255,0,0, 3))
                 cv2.imshow("Img", img)
                 cv2.waitKey(1)
+        # Zoom IN
+        elif  not fingers[1] and  fingers[0] and not fingers[2] and not fingers[3] and not fingers[4] :
+            
+            while True:
+                
+                success , img = cap.read()
+                img = cv2.flip(img, 1)
+                cTime = time.time()
+                fps =  1/(cTime-pTime)
+                pTime = cTime
+                img = detector.findHands(img)
+                lmList, handedness = detector.findPosition(img, draw= False)
+
+                if len(lmList)!=0:
+                    
+                    fingers = detector.fingersUp(lmList)
+                    if  fingers[1] and not fingers[0]:
+                        print("Zoom In")
+                        pyautogui.keyDown("ctrl")
+                        pyautogui.press("+")
+                        pyautogui.keyUp("ctrl")
+                    break
+                
+                # cv2.putText(img, f'FPS: {int(fps)}', (40,50), cv2.FONT_HERSHEY_COMPLEX, 1, (255,0,0, 3))
+                # cv2.imshow("Img", img)
+                # cv2.waitKey(1)
 
 
 
