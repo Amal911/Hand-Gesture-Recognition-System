@@ -34,7 +34,7 @@ wifi= 0
 
 while True:
     success , img = cap.read()
-
+    img = cv2.flip(img, 1)
 
 
 
@@ -56,6 +56,7 @@ while True:
 
             while True:
                 success , img = cap.read()
+                img = cv2.flip(img, 1)
                 cTime = time.time()
                 fps =  1/(cTime-pTime)
                 pTime = cTime
@@ -84,6 +85,7 @@ while True:
 
             while True:
                 success , img = cap.read()
+                img = cv2.flip(img, 1)
                 cTime = time.time()
                 fps =  1/(cTime-pTime)
                 pTime = cTime
@@ -116,6 +118,7 @@ while True:
 
             while True:
                 success , img = cap.read()
+                img = cv2.flip(img, 1)
                 cTime = time.time()
                 fps =  1/(cTime-pTime)
                 pTime = cTime
@@ -139,6 +142,7 @@ while True:
 
             while True:
                 success , img = cap.read()
+                img = cv2.flip(img, 1)
                 cTime = time.time()
                 fps =  1/(cTime-pTime)
                 pTime = cTime
