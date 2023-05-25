@@ -9,6 +9,9 @@ from comtypes import CLSCTX_ALL
 from pycaw.pycaw import AudioUtilities, IAudioEndpointVolume
 import screen_brightness_control as sbc
 import pyautogui
+import ctypes
+import os
+
 
 wCam, hCam = 640, 480
 cap = cv2.VideoCapture(0)
@@ -97,7 +100,7 @@ while True:
                 if len(lmList)!=0:
                     
                     fingers = detector.fingersUp(lmList)
-                    if not fingers[1] and not fingers[2] and not fingers[3] and not fingers[3]:
+                    if not fingers[1] and not fingers[2] and not fingers[3] and not fingers[4]:
 
                         if not btooth:
                             btooth = 1
@@ -139,7 +142,28 @@ while True:
                 # cv2.putText(img, f'FPS: {int(fps)}', (40,50), cv2.FONT_HERSHEY_COMPLEX, 1, (255,0,0, 3))
                 # cv2.imshow("Img", img)
                 # cv2.waitKey(1)
+        # Lock
+        elif fingers[1] and  fingers[0] and  fingers[2] and  fingers[3] and  fingers[4] :
+            while True:
+                success , img = cap.read()
+                img = cv2.flip(img, 1)
+                cTime = time.time()
+                fps =  1/(cTime-pTime)
+                pTime = cTime
+                img = detector.findHands(img)
+                lmList, handedness = detector.findPosition(img, draw= False)
 
+                if len(lmList)!=0:
+                    fingers = detector.fingersUp(lmList)
+                    if not fingers[0] and not fingers[1] and not fingers[2] and not fingers[3] and not fingers[3]:
+                        
+                        # pyautogui.hotkey('winleft','l')
+                        ctypes.windll.user32.LockWorkStation()
+                        print("lock")
+                    break
+                cv2.putText(img, f'FPS: {int(fps)}', (40,50), cv2.FONT_HERSHEY_COMPLEX, 1, (255,0,0, 3))
+                cv2.imshow("Img", img)
+                cv2.waitKey(1)
 
        
     elif handedness == "Right":
@@ -230,6 +254,45 @@ while True:
                 # cv2.putText(img, f'FPS: {int(fps)}', (40,50), cv2.FONT_HERSHEY_COMPLEX, 1, (255,0,0, 3))
                 # cv2.imshow("Img", img)
                 # cv2.waitKey(1)
+        
+        # ScreenShot
+        elif not fingers[0] and fingers[1] and fingers[2] and  fingers[3] and  fingers[4] :
+            while True:
+                success , img = cap.read()
+                img = cv2.flip(img, 1)
+                cTime = time.time()
+                fps =  1/(cTime-pTime)
+                pTime = cTime
+                img = detector.findHands(img)
+                lmList, handedness = detector.findPosition(img, draw= False)
+
+                if len(lmList)!=0:
+                    fingers = detector.fingersUp(lmList)
+                    if not fingers[0] and not fingers[1] and not fingers[2] and not fingers[3] and not fingers[3]:
+                        directory_path = 'screenshots/'
+                        most_recent_file = None
+                        most_recent_time = 0
+                        for entry in os.scandir(directory_path):
+                            if entry.is_file():
+                                # get the modification time of the file using entry.stat().st_mtime_ns
+                                mod_time = entry.stat().st_mtime_ns
+                                if mod_time > most_recent_time:
+                                    # update the most recent file and its modification time
+                                    most_recent_file = entry.name
+                                    most_recent_time = mod_time
+                        if most_recent_file== None:
+                            pyautogui.screenshot('screenshots/1.png')
+                        else:
+                            name = os.path.splitext(most_recent_file)
+                            name=int(name[0])
+                            name=str (name+1)
+                            pyautogui.screenshot('screenshots/'+name+'.png')
+                        
+                        print("Screenshot")
+                    break
+                cv2.putText(img, f'FPS: {int(fps)}', (40,50), cv2.FONT_HERSHEY_COMPLEX, 1, (255,0,0, 3))
+                cv2.imshow("Img", img)
+                cv2.waitKey(1)
 
 
 
