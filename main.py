@@ -124,9 +124,14 @@ while True:
 
                 if len(lmList)!=0:
                     
+                    x1, y1 = lmList[4][1], lmList[4][2]   
+                    x2, y2 = lmList[8][1], lmList[8][2] 
+                    length = math.hypot(x2-x1, y2-y1)
+                
                     fingers = detector.fingersUp(lmList)
-                    if not fingers[1] and  fingers[0] and not fingers[2] and not fingers[3] and not fingers[4]:
-                        print("Zoom Out")
+                    if  length<50:
+
+                        print("Zoom out")
                         pyautogui.keyDown("ctrl")
                         pyautogui.press("-")
                         pyautogui.keyUp("ctrl")
@@ -205,10 +210,17 @@ while True:
                 img = detector.findHands(img)
                 lmList, handedness = detector.findPosition(img, draw= False)
 
+
+               
                 if len(lmList)!=0:
                     
+                    x1, y1 = lmList[4][1], lmList[4][2]   
+                    x2, y2 = lmList[8][1], lmList[8][2] 
+                    length = math.hypot(x2-x1, y2-y1)
+                
                     fingers = detector.fingersUp(lmList)
-                    if  fingers[1] and not fingers[0]:
+                    if  length>50:
+
                         print("Zoom In")
                         pyautogui.keyDown("ctrl")
                         pyautogui.press("+")
